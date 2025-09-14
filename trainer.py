@@ -12,7 +12,7 @@ import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import resnet
-import SCALE_optimizer
+from SCALE_optimizer import SCALE
 #import Build_SCALE
 
 model_names = sorted(name for name in resnet.__dict__
