@@ -127,7 +127,7 @@ def main():
     main_params = []
     oned_params = []
     secondary_params = []
-    main_modules_list = ["attn", "mlp", "attention", "embed_tokens"]
+    main_modules_list = ["conv", "downsample"]  # ResNet-specific modules
 
     id_to_name_main_params = {}
     id_to_name_secondary_params = {}
@@ -135,24 +135,22 @@ def main():
 
     # Categorize model parameters
     for module_name, module in model.named_modules():
-       if not (isinstance(module, torch.nn.Linear) or isinstance(module, torch.nn.Embedding)):
-          continue
-       if not any(target_key in module_name for target_key in main_modules_list):
-          continue
-    
-       main_params.append(module.weight)
-       id_to_name_main_params[id(module.weight)] = module_name
+       if isinstance(module, (torch.nn.Conv2d, torch.nn.Linear)):
+           if any(target_key in module_name for target_key in main_modules_list):
+             main_params.append(module.weight)
+             id_to_name_main_params[id(module.weight)] = module_name
+           else:
+             secondary_params.append(module.weight)
+             id_to_name_secondary_params[id(module.weight)] = module_name
 
+    # Handle 1D parameters (biases, batch norm parameters)
     for param_name, p in model.named_parameters():
-       if id(p) in id_to_name_main_params:
-        continue
+       if id(p) in id_to_name_main_params or id(p) in id_to_name_secondary_params:
+           continue
     
        if p.ndim == 1:
-        oned_params.append(p)
-        id_to_name_oned_params[id(p)] = param_name
-       else:
-        secondary_params.append(p)
-        id_to_name_secondary_params[id(p)] = param_name
+          oned_params.append(p)
+          id_to_name_oned_params[id(p)] = param_name
 
     id_to_name = {**id_to_name_main_params, **id_to_name_secondary_params, **id_to_name_oned_params}
 
