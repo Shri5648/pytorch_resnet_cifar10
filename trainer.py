@@ -170,13 +170,8 @@ def main():
 )
 #####################################FOR SCALE OPTIMIZER (Perplexity AI)#######################################################################
 
-    #lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
-                                                        milestones=[100, 150], last_epoch=args.start_epoch - 1)
-    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(
-    optimizer,
-    milestones=[100, 150], 
-    gamma=0.1,  # This will reduce lr to 0.0001 and 0.00001
-    last_epoch=args.start_epoch - 1)
+    #lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 150], last_epoch=args.start_epoch - 1)
+    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 150],gamma=0.1, last_epoch=args.start_epoch - 1)# This will reduce lr to 0.0001 and 0.00001
 
     #if args.arch in ['resnet1202', 'resnet110']:
         # for resnet1202 original paper uses lr=0.01 for first 400 minibatches for warm-up
