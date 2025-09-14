@@ -118,8 +118,8 @@ def main():
     #trainable_params = [p for p in model.parameters() if p.requires_grad] #For SCALE
 
     #optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
+    #                            momentum=args.momentum,
+    #                            weight_decay=args.weight_decay)
     #optimizer=build_optimizer(model, trainable_params, args) # args.optimizer='scale'?
 
     ###################################FOR SCALE OPTIMIZER (Perplexity AI)#####################################################
