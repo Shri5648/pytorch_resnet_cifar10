@@ -57,12 +57,12 @@ class SCALE(torch.optim.Optimizer):
     # Perplexity AI step definition
     def step(self, closure=None):
     """Perform a single optimization step."""
-    loss = None
-    if closure is not None:
+     loss = None
+     if closure is not None:
         with torch.enable_grad():
             loss = closure()
     
-    for group in self.param_groups:
+     for group in self.param_groups:
         # Main+Secondary Params
         params = [p for p in group["params"] if (self.state[p]["param_type"] == "main_param") or (self.state[p]["param_type"] == "secondary_param")]
         lr = group["lr"]
@@ -164,7 +164,7 @@ class SCALE(torch.optim.Optimizer):
             p.data.mul_(1 - lr * weight_decay)
             p.data.add_(g, alpha=-lr / scale)
 
-    return loss
+     return loss
 
             
 """ (Original step definition function)
