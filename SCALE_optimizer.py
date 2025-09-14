@@ -54,7 +54,120 @@ class SCALE(torch.optim.Optimizer):
             self.state[p]["param_type"] = "secondary_param"
         for p in oned_params:
             self.state[p]["param_type"] = "oned_param"
+    # Perplexity AI step definition
+    def step(self, closure=None):
+    """Perform a single optimization step."""
+    loss = None
+    if closure is not None:
+        with torch.enable_grad():
+            loss = closure()
+    
+    for group in self.param_groups:
+        # Main+Secondary Params
+        params = [p for p in group["params"] if (self.state[p]["param_type"] == "main_param") or (self.state[p]["param_type"] == "secondary_param")]
+        lr = group["lr"]
+        wd = group["wd"]
+        beta1 = group["momentum"]
 
+        for p in params:
+            # sanity check
+            g = p.grad
+            if g is None:
+                continue
+            
+            # Store original shape for later restoration
+            original_shape = g.shape
+            
+            # Handle different tensor dimensions
+            if g.ndim > 2:
+                # For convolutional layers: reshape to 2D
+                g = g.view(g.size(0), -1)
+            
+            assert g is not None
+            
+            if self.debug:
+                print("Main: ", self.id_to_name[id(p)] if self.id_to_name else "unknown")
+            
+            # Determine column dimension
+            if self.id_to_name is not None and "embed_tokens" in self.id_to_name[id(p)]: 
+                col_dim = 0
+            else:
+                col_dim = 1
+            
+            # calc update
+            state = self.state[p]
+
+            if self.state[p]["param_type"] == "secondary_param":
+                # add momentum 
+                if "moment1" not in state:
+                    state["moment1"] = torch.zeros_like(g)
+                buf1 = state["moment1"]
+                buf1.lerp_(g, 1 - beta1)
+                g = buf1
+
+            var = torch.mean(torch.square(g), dim=col_dim, keepdim=True)
+            s = torch.sqrt(var).clamp_min_(1e-8)
+            u = g / s
+            
+            # Reshape update back to original parameter shape
+            if original_shape != u.shape:
+                u = u.view(original_shape)
+            
+            # apply weight decay
+            p.data.mul_(1 - lr * wd)
+            
+            # apply update
+            p.data.add_(u, alpha=-lr)
+            
+            if self.debug:
+                print("p.data.dtype: ", p.data.dtype, "u.dtype: ", u.dtype)
+
+        # 1D Params (unchanged - this part works fine)
+        params = [p for p in group["params"] if (self.state[p]["param_type"] == "oned_param")]
+        
+        beta1, beta2 = group["adamw_betas"]
+        eps = group["adamw_eps"]
+        weight_decay = group["wd"]
+        
+        lr = group['lr']
+        adam_lr = group['adam_lr'] 
+        max_lr = self.max_lr
+        
+        lr = (adam_lr / max_lr) * lr 
+        
+        for p in params:
+            g = p.grad
+            if g is None:
+                continue
+            
+            if self.debug:
+                print("1D (AdamW): ", self.id_to_name[id(p)] if self.id_to_name else "unknown")
+                print("Adam lr = ", lr) 
+            
+            state = self.state[p]
+            if "step" not in state:
+                state["step"] = 0
+                state["moment1"] = torch.zeros_like(g)
+                state["moment2"] = torch.zeros_like(g)
+            state["step"] += 1
+            step = state["step"]
+            buf1 = state["moment1"]
+            buf2 = state["moment2"]
+            buf1.lerp_(g, 1 - beta1)
+            buf2.lerp_(g.square(), 1 - beta2)
+
+            g = buf1 / (eps + buf2.sqrt())
+            
+            bias_correction1 = 1 - beta1**step
+            bias_correction2 = 1 - beta2**step
+            scale = bias_correction1 / bias_correction2**0.5
+            p.data.mul_(1 - lr * weight_decay)
+            p.data.add_(g, alpha=-lr / scale)
+
+    return loss
+
+            
+""" (Original step definition function)
     def step(self, closure=None):
         """Perform a single optimization step.
         
@@ -168,3 +281,4 @@ class SCALE(torch.optim.Optimizer):
                 p.data.add_(g, alpha=-lr / scale)                
 
         return loss
+"""
