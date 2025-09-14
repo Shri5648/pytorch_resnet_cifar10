@@ -156,22 +156,27 @@ def main():
 
     # Create SCALE optimizer
     optimizer = SCALE(
-    lr=args.lr,
-    wd=args.weight_decay,
+    lr=0.001,          #  Reduced from 0.1 to 0.001
+    wd=0.0,            #  Set to 0 (SCALE handles regularization)
     main_params=main_params,
     secondary_params=secondary_params,
     oned_params=oned_params,
     id_to_name=id_to_name,
     debug=False,
-    momentum=args.momentum,
-    adam_lr=args.lr,
+    momentum=0.9,
+    adam_lr=0.001,     #  Match main learning rate
     adamw_betas=(0.9, 0.999),
     adamw_eps=1e-8,
 )
 #####################################FOR SCALE OPTIMIZER (Perplexity AI)#######################################################################
 
-    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
+    #lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
                                                         milestones=[100, 150], last_epoch=args.start_epoch - 1)
+    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(
+    optimizer,
+    milestones=[100, 150], 
+    gamma=0.1,  # This will reduce lr to 0.0001 and 0.00001
+    last_epoch=args.start_epoch - 1)
 
     #if args.arch in ['resnet1202', 'resnet110']:
         # for resnet1202 original paper uses lr=0.01 for first 400 minibatches for warm-up
