@@ -115,21 +115,71 @@ def main():
         model.half()
         criterion.half()
     
-    trainable_params = [p for p in model.parameters() if p.requires_grad] #For SCALE
+    #trainable_params = [p for p in model.parameters() if p.requires_grad] #For SCALE
 
     #optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
-    optimizer=build_optimizer(model, trainable_params, args) # args.optimizer='scale'?
+    #optimizer=build_optimizer(model, trainable_params, args) # args.optimizer='scale'?
+
+    ###################################FOR SCALE OPTIMIZER (Perplexity AI)#####################################################
+    # Categorize parameters for SCALE optimizer
+    main_params = []
+    oned_params = []
+    secondary_params = []
+    main_modules_list = ["attn", "mlp", "attention", "embed_tokens"]
+
+    id_to_name_main_params = {}
+    id_to_name_secondary_params = {}
+    id_to_name_oned_params = {}
+
+    # Categorize model parameters
+    for module_name, module in model.named_modules():
+       if not (isinstance(module, torch.nn.Linear) or isinstance(module, torch.nn.Embedding)):
+          continue
+       if not any(target_key in module_name for target_key in main_modules_list):
+          continue
+    
+       main_params.append(module.weight)
+       id_to_name_main_params[id(module.weight)] = module_name
+
+    for param_name, p in model.named_parameters():
+       if id(p) in id_to_name_main_params:
+        continue
+    
+       if p.ndim == 1:
+        oned_params.append(p)
+        id_to_name_oned_params[id(p)] = param_name
+       else:
+        secondary_params.append(p)
+        id_to_name_secondary_params[id(p)] = param_name
+
+    id_to_name = {**id_to_name_main_params, **id_to_name_secondary_params, **id_to_name_oned_params}
+
+    # Create SCALE optimizer
+    optimizer = SCALE(
+    lr=args.lr,
+    wd=args.weight_decay,
+    main_params=main_params,
+    secondary_params=secondary_params,
+    oned_params=oned_params,
+    id_to_name=id_to_name,
+    debug=False,
+    momentum=args.momentum,
+    adam_lr=args.lr,
+    adamw_betas=(0.9, 0.999),
+    adamw_eps=1e-8,
+)
+#####################################FOR SCALE OPTIMIZER (Perplexity AI)#######################################################################
 
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
                                                         milestones=[100, 150], last_epoch=args.start_epoch - 1)
 
-    if args.arch in ['resnet1202', 'resnet110']:
+    #if args.arch in ['resnet1202', 'resnet110']:
         # for resnet1202 original paper uses lr=0.01 for first 400 minibatches for warm-up
         # then switch back. In this setup it will correspond for first epoch.
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = args.lr*0.1
+    #    for param_group in optimizer.param_groups:
+    #        param_group['lr'] = args.lr*0.1
 
 
     if args.evaluate:
