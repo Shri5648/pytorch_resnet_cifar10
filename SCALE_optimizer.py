@@ -56,7 +56,7 @@ class SCALE(torch.optim.Optimizer):
             self.state[p]["param_type"] = "oned_param"
     # Perplexity AI step definition
     def step(self, closure=None):
-    """Perform a single optimization step."""
+     """Perform a single optimization step."""
      loss = None
      if closure is not None:
         with torch.enable_grad():
