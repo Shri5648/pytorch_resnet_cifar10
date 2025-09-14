@@ -113,10 +113,13 @@ def main():
     if args.half:
         model.half()
         criterion.half()
+    
+    trainable_params = [p for p in model.parameters() if p.requires_grad] #For SCALE
 
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
+    #optimizer = torch.optim.SGD(model.parameters(), args.lr,
                                 momentum=args.momentum,
                                 weight_decay=args.weight_decay)
+    optimizer=build_optimizer(model, trainable_params, args)
 
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
                                                         milestones=[100, 150], last_epoch=args.start_epoch - 1)
