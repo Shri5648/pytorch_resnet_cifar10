@@ -13,7 +13,7 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import resnet
 import SCALE_optimizer
-import Build_SCALE
+#import Build_SCALE
 
 model_names = sorted(name for name in resnet.__dict__
     if name.islower() and not name.startswith("__")
