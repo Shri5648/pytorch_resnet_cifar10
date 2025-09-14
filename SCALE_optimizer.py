@@ -167,7 +167,7 @@ class SCALE(torch.optim.Optimizer):
      return loss
 
             
-""" (Original step definition function)
+''' (Original step definition function)
     def step(self, closure=None):
         """Perform a single optimization step.
         
@@ -281,4 +281,4 @@ class SCALE(torch.optim.Optimizer):
                 p.data.add_(g, alpha=-lr / scale)                
 
         return loss
-"""
+'''
