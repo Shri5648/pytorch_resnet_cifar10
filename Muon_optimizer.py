@@ -1,3 +1,7 @@
+import torch
+import torch.nn.functional as F
+from torch import Tensor
+
 @torch.compile
 def zeropower_via_newtonschulz5(G, steps=5):
     """Newton-Schulz iteration for matrix orthogonalization"""
