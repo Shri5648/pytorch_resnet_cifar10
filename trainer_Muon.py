@@ -12,6 +12,7 @@ import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import resnet
+from muon import Muon
 
 model_names = sorted(name for name in resnet.__dict__
     if name.islower() and not name.startswith("__")
@@ -113,18 +114,38 @@ def main():
         model.half()
         criterion.half()
 
-    optimizer = torch.optim.SGD(model.parameters(), args.lr,
-                                momentum=args.momentum,
-                                weight_decay=args.weight_decay)
+    #optimizer = torch.optim.SGD(model.parameters(), args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+    ############################# Perplexity AI Code ######################################
+    # Separate parameters by dimensionality
+    hidden_matrix_params = [p for p in model.parameters() if p.ndim >= 2]  # Conv2d weights, Linear weights
+    other_params = [p for p in model.parameters() if p.ndim < 2]           # Biases, BatchNorm params
 
-    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
-                                                        milestones=[100, 150], last_epoch=args.start_epoch - 1)
+    # Use Muon for 2D+ parameters (weight matrices)
+    muon_optimizer = Muon(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+
+    # Use SGD for 1D parameters (biases, batch norm)
+    sgd_optimizer = torch.optim.SGD(other_params, lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+
+    # Create optimizer list for easy iteration
+    optimizers = [muon_optimizer, sgd_optimizer]
+
+    ########################## Perplexity AI Code ###########################################################
+
+    #lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 150], last_epoch=args.start_epoch - 1)
+    #################################### Perplexity AI Code ##################################
+    # Update for multiple optimizers
+    lr_schedulers = [
+    torch.optim.lr_scheduler.MultiStepLR(muon_optimizer, milestones=[100, 150], last_epoch=args.start_epoch - 1),
+    torch.optim.lr_scheduler.MultiStepLR(sgd_optimizer, milestones=[100, 150], last_epoch=args.start_epoch - 1)
+    ]
+    ########################## Perplexity AI Code ##################################################
 
     if args.arch in ['resnet1202', 'resnet110']:
         # for resnet1202 original paper uses lr=0.01 for first 400 minibatches for warm-up
         # then switch back. In this setup it will correspond for first epoch.
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = args.lr*0.1
+        for opt in optimizers:
+           for param_group in opt.param_groups:
+              param_group['lr'] = param_group['lr'] * 0.1
 
 
     if args.evaluate:
@@ -134,9 +155,12 @@ def main():
     for epoch in range(args.start_epoch, args.epochs):
 
         # train for one epoch
-        print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
+        #print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
+        print('current Muon lr {:.5e}, SGD lr {:.5e}'.format(muon_optimizer.param_groups[0]['lr'],sgd_optimizer.param_groups[0]['lr'] if sgd_optimizer.param_groups else 0))
         train(train_loader, model, criterion, optimizer, epoch)
-        lr_scheduler.step()
+        #lr_scheduler.step()
+        for scheduler in lr_schedulers:
+           scheduler.step()
 
         # evaluate on validation set
         prec1 = validate(val_loader, model, criterion)
@@ -187,9 +211,14 @@ def train(train_loader, model, criterion, optimizer, epoch):
         loss = criterion(output, target_var)
 
         # compute gradient and do SGD step
-        optimizer.zero_grad()
+        #optimizer.zero_grad()
+        #loss.backward()
+        #optimizer.step()
+        for opt in optimizers:
+           opt.zero_grad()
         loss.backward()
-        optimizer.step()
+        for opt in optimizers:
+           opt.step()
 
         output = output.float()
         loss = loss.float()
