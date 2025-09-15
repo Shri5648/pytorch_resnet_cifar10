@@ -157,7 +157,7 @@ def main():
         # train for one epoch
         #print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
         print('current Muon lr {:.5e}, SGD lr {:.5e}'.format(muon_optimizer.param_groups[0]['lr'],sgd_optimizer.param_groups[0]['lr'] if sgd_optimizer.param_groups else 0))
-        train(train_loader, model, criterion, optimizer, epoch)
+        train(train_loader, model, criterion, optimizers, epoch)
         #lr_scheduler.step()
         for scheduler in lr_schedulers:
            scheduler.step()
@@ -182,7 +182,7 @@ def main():
         }, is_best, filename=os.path.join(args.save_dir, 'model.th'))
 
 
-def train(train_loader, model, criterion, optimizer, epoch):
+def train(train_loader, model, criterion, optimizers, epoch):
     """
         Run one train epoch
     """
