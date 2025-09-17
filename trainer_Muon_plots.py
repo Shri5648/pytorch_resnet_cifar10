@@ -171,8 +171,8 @@ def main():
         val_prec1_history.append(val_prec1)
 
         # evaluate on validation set
-        prec1 = validate(val_loader, model, criterion)
-
+        #prec1 = validate(val_loader, model, criterion)
+        prec1=val_prec1
         # remember best prec@1 and save checkpoint
         is_best = prec1 > best_prec1
         best_prec1 = max(prec1, best_prec1)
