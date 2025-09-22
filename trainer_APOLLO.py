@@ -12,7 +12,7 @@ import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import resnet
-from apollo_torch import APOLLOAdamW
+from apollo.optimizers import Apollo
 
 model_names = sorted(name for name in resnet.__dict__
     if name.islower() and not name.startswith("__")
@@ -127,8 +127,9 @@ def main():
     #optimizer = APOLLOAdamW(model.parameters(),lr=args.lr,weight_decay=args.weight_decay,rank=256,scale_type='channel',scale=1.0, proj='random',update_proj_gap=200)
     # For APOLLO-Mini with extreme memory efficiency
     #optimizer = APOLLOAdamW(model.parameters(),lr=args.lr,weight_decay=args.weight_decay,rank=1, scale_type='tensor', scale=128, proj='random', update_proj_gap=200)
-    optimizer = APOLLOAdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, rank=args.apollo_rank, scale_type=args.apollo_scale_type, scale=args.apollo_scale, proj='random', update_proj_gap=200)
-                       
+    #optimizer = APOLLOAdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, rank=args.apollo_rank, scale_type=args.apollo_scale_type, scale=args.apollo_scale, proj='random', update_proj_gap=200)
+    optimizer = Apollo(params=model.parameters(),lr=args.lr,weight_decay=args.weight_decay,rank=args.apollo_rank,scale_type=args.apollo_scale_type,scale=args.apollo_scale,proj='random',update_proj_gap=200)
+                   
        
 
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
