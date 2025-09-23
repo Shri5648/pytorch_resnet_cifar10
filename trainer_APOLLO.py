@@ -12,7 +12,11 @@ import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import resnet
-from apollo.optimizers import Apollo
+#from apollo.optimizers import Apollo
+
+from apollo_torch import APOLLOAdamW
+
+
 
 model_names = sorted(name for name in resnet.__dict__
     if name.islower() and not name.startswith("__")
