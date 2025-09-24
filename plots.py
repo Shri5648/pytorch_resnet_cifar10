@@ -1,4 +1,4 @@
-def plot_data(epochs,train_prec1_history, val_prec1_history):
+def plot_data(train_prec1_history, val_prec1_history):
 
     epochs = range(1, args.epochs + 1)
     plt.figure(figsize=(8,5))
