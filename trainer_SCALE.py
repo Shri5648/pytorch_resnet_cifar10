@@ -270,6 +270,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
      #             'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
      #                 epoch, i, len(train_loader), batch_time=batch_time,
      #                 data_time=data_time, loss=losses, top1=top1))
+        return top1.avg
 
 
 def validate(val_loader, model, criterion):
