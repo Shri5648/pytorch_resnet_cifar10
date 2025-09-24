@@ -14,8 +14,8 @@ import torchvision.datasets as datasets
 import resnet
 #from apollo.optimizers import Apollo
 
-from apollo import APOLLOAdamW
-
+#from apollo import APOLLOAdamW
+from apollo_torch.optim import APOLLOAdamW
 
 
 model_names = sorted(name for name in resnet.__dict__
