@@ -155,7 +155,7 @@ def main():
         validate(val_loader, model, criterion)
         return
 
-    for epoch in range(args.start_epoch, args.epochs):
+    for epoch in range(args.start_epoch, 5):#args.epochs):
 
         # train for one epoch
         #print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
@@ -343,7 +343,8 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
+    text_file_name='Muon_results.txt"
     with open(text_file_name, "w") as f:
         f.write("File written by trainer_Muon.py\n")
-        f.write(f"train_prec1_history={train_prec1_history},val_prec1_history={val_prec1_history}")
+        f.write(f"Epochs={epochs},\n" f"train_prec1_history={train_prec1_history},\n" f"val_prec1_history={val_prec1_history}")
     
