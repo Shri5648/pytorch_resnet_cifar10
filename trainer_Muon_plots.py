@@ -343,7 +343,7 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    text_file_name='Muon_results.txt"
+    text_file_name='Muon_results.txt'
     with open(text_file_name, "w") as f:
         f.write("File written by trainer_Muon.py\n")
         f.write(f"Epochs={epochs},\n" f"train_prec1_history={train_prec1_history},\n" f"val_prec1_history={val_prec1_history}")
