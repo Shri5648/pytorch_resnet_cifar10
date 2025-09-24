@@ -155,7 +155,7 @@ def main():
         validate(val_loader, model, criterion)
         return
 
-    for epoch in range(args.start_epoch, 5):#args.epochs):
+    for epoch in range(args.start_epoch, 2):#args.epochs):
 
         # train for one epoch
         #print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
