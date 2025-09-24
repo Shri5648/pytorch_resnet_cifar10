@@ -15,7 +15,7 @@ import resnet
 #from apollo.optimizers import Apollo
 
 #from apollo import APOLLOAdamW
-from apollo_torch.optim import APOLLOAdamW
+from apollo_torch import apollo.py
 
 
 model_names = sorted(name for name in resnet.__dict__
