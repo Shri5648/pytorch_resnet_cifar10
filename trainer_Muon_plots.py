@@ -346,5 +346,5 @@ if __name__ == '__main__':
     text_file_name='Muon_results.txt'
     with open(text_file_name, "w") as f:
         f.write("File written by trainer_Muon.py\n")
-        f.write(f"Epochs={epochs},\n" f"train_prec1_history={train_prec1_history},\n" f"val_prec1_history={val_prec1_history}")
+        f.write(f"train_prec1_history={train_prec1_history},\n" f"val_prec1_history={val_prec1_history}")
     
