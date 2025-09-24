@@ -59,6 +59,8 @@ parser.add_argument('--save-every', dest='save_every',
                     type=int, default=10)
 best_prec1 = 0
 
+train_prec1_history = []
+val_prec1_history   = []
 
 def main():
     global args, best_prec1
@@ -188,11 +190,16 @@ def main():
 
         # train for one epoch
         print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
-        train(train_loader, model, criterion, optimizer, epoch)
+        train_prec1 = train(train_loader, model, criterion, optimizer, epoch)
+        train_prec1_history.append(train_prec1)
+
         lr_scheduler.step()
 
         # evaluate on validation set
-        prec1 = validate(val_loader, model, criterion)
+        val_prec1 = validate(val_loader, model, criterion)
+        val_prec1_history.append(val_prec1)
+
+        prec1=val_prec1
 
         # remember best prec@1 and save checkpoint
         is_best = prec1 > best_prec1
@@ -255,14 +262,14 @@ def train(train_loader, model, criterion, optimizer, epoch):
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if i % args.print_freq == 0:
-            print('Epoch: [{0}][{1}/{2}]\t'
-                  'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                  'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                  'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
-                      epoch, i, len(train_loader), batch_time=batch_time,
-                      data_time=data_time, loss=losses, top1=top1))
+     #   if i % args.print_freq == 0:
+     #       print('Epoch: [{0}][{1}/{2}]\t'
+     #             'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+     #             'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
+     #             'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+     #             'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
+     #                 epoch, i, len(train_loader), batch_time=batch_time,
+     #                 data_time=data_time, loss=losses, top1=top1))
 
 
 def validate(val_loader, model, criterion):
@@ -302,13 +309,13 @@ def validate(val_loader, model, criterion):
             batch_time.update(time.time() - end)
             end = time.time()
 
-            if i % args.print_freq == 0:
-                print('Test: [{0}/{1}]\t'
-                      'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                      'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                      'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
-                          i, len(val_loader), batch_time=batch_time, loss=losses,
-                          top1=top1))
+       #     if i % args.print_freq == 0:
+       #         print('Test: [{0}/{1}]\t'
+       #               'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
+       #               'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
+       #               'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
+       #                   i, len(val_loader), batch_time=batch_time, loss=losses,
+       #                   top1=top1))
 
     print(' * Prec@1 {top1.avg:.3f}'
           .format(top1=top1))
