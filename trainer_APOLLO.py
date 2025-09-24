@@ -14,7 +14,7 @@ import torchvision.datasets as datasets
 import resnet
 #from apollo.optimizers import Apollo
 
-from apollo_torch import APOLLOAdamW
+from apollo import APOLLOAdamW
 
 
 
