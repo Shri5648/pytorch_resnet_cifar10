@@ -186,7 +186,7 @@ def main():
         validate(val_loader, model, criterion)
         return
 
-    for epoch in range(args.start_epoch,args.epochs):
+    for epoch in range(args.start_epoch,2): #args.epochs):
 
         # train for one epoch
         print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
@@ -366,7 +366,7 @@ def accuracy(output, target, topk=(1,)):
 if __name__ == '__main__':
     main()
 
-    text_file_name='SCALE_results.txt'
-    with open(text_file_name, "w") as f:
+    matlab_file_name='SCALE_results.m'
+    with open(matlab_file_name, "w") as f:
         f.write("File written by trainer_SCALE.py\n")
         f.write(f"train_prec1_history={train_prec1_history},\n" f"val_prec1_history={val_prec1_history}")
