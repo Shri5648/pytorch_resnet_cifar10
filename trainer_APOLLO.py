@@ -331,7 +331,7 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    text_file_name='APOLLO_results.txt'
-    with open(text_file_name, "w") as f:
-        f.write("File written by trainer_APOLLO.py\n")
-        f.write(f"train_prec1_history={train_prec1_history},\n" f"val_prec1_history={val_prec1_history}")
+    matlab_file_name='APOLLO_results.m'
+    with open(matlab_file_name, "w") as f:
+        f.write("%File written by trainer_APOLLO.py\n")
+        f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};")
