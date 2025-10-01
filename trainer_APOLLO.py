@@ -15,7 +15,8 @@ import resnet
 #from apollo.optimizers import Apollo
 
 #from apollo import APOLLOAdamW
-from apollo_torch.apollo import AdamW as APOLLOAdamW
+#from apollo_torch.apollo import AdamW as APOLLOAdamW
+from apollo_torch import APOLLOAdamW
 
 
 model_names = sorted(name for name in resnet.__dict__
@@ -134,12 +135,21 @@ def main():
     # For APOLLO-Mini with extreme memory efficiency
     #optimizer = APOLLOAdamW(model.parameters(),lr=args.lr,weight_decay=args.weight_decay,rank=1, scale_type='tensor', scale=128, proj='random', update_proj_gap=200)
     #optimizer = APOLLOAdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, rank=args.apollo_rank, scale_type=args.apollo_scale_type, scale=args.apollo_scale, proj='random', update_proj_gap=200)
-    optimizer = APOLLOAdamW(params=model.parameters(), lr=args.lr, betas=(0.9, 0.999), eps=1e-6, weight_decay=args.weight_decay, correct_bias=True, no_deprecation_warning=True)
+    param_groups = [{'params': non_lowrank_params}, 
+                {'params': 
+                  lowrank_params, 
+                  'rank': 256, 
+                  'proj': 'random', 
+                  'scale_type': 'tensor', 
+                  'scale': 128,
+                  'update_proj_gap': 200, 
+                  'proj_type': 'std'}]
+    optimizer = APOLLO(param_groups, lr=0.01)
+    #optimizer = APOLLOAdamW(params=model.parameters(), lr=args.lr, betas=(0.9, 0.999), eps=1e-6, weight_decay=args.weight_decay, correct_bias=True, no_deprecation_warning=True)
               
        
 
-    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
-                                                        milestones=[100, 150], last_epoch=args.start_epoch - 1)
+   # lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[100, 150], last_epoch=args.start_epoch - 1)
 
     if args.arch in ['resnet1202', 'resnet110']:
         # for resnet1202 original paper uses lr=0.01 for first 400 minibatches for warm-up
