@@ -3,23 +3,12 @@ import torch.nn.functional as F
 from torch import Tensor
 
 @torch.compile
-def zeropower_via_newtonschulz5(G, steps=5):
-    """Newton-Schulz iteration for matrix orthogonalization"""
-    assert G.ndim >= 2
-    a, b, c = (3.4445, -4.7750, 2.0315)
-    X = G.bfloat16()
-    if G.size(-2) > G.size(-1):
-        X = X.mT
-    X = X / (X.norm(dim=(-2, -1), keepdim=True) + 1e-7)
-    for _ in range(steps):
-        A = X @ X.mT
-        B = b * A + c * A @ A
-        X = a * X + B @ X
-    if G.size(-2) > G.size(-1):
-        X = X.mT
-    return X.type_as(G)
+def SVD_exact(G: Tensor) -> tuple[Tensor, Tensor, Tensor]:
+    # Compute full SVD of the gradient tensor
+    U, S, Vh = torch.linalg.svd(G, full_matrices=True)
+    return U, S, Vh
 
-class Muon(torch.optim.Optimizer):
+class Muon_pnorm(torch.optim.Optimizer):
     def __init__(self, params, lr=0.02, weight_decay=0.01, momentum=0.95):
         defaults = dict(lr=lr, weight_decay=weight_decay, momentum=momentum)
         super().__init__(params, defaults)
@@ -30,17 +19,32 @@ class Muon(torch.optim.Optimizer):
             for p in group['params']:
                 if p.grad is None:
                     continue
-                grad = p.grad
+                G = p.grad
                 state = self.state[p]
                 
+                # Initialize momentum buffer if first step
                 if len(state) == 0:
-                    state['momentum_buffer'] = torch.zeros_like(grad)
+                    state['momentum_buffer'] = torch.zeros_like(G)
+                    state['step'] = 0
                 
                 momentum_buffer = state['momentum_buffer']
-                p.mul_(1 - group['lr'] * group['weight_decay'])
-                momentum_buffer.lerp_(grad, 1 - group['momentum'])
-                grad = grad.lerp_(momentum_buffer, group['momentum'])
                 
-                # Apply Newton-Schulz orthogonalization
-                v = zeropower_via_newtonschulz5(grad, 5)
-                p.add_(v, alpha=-group['lr'])
+                # Weight decay (in-place)
+                p.mul_(1 - group['lr'] * group['weight_decay'])
+                
+                # Momentum update
+                momentum_buffer.lerp_(G, 1 - group['momentum'])
+                blended_grad = G.lerp(momentum_buffer, group['momentum'])
+                
+                # Compute SVD of blended gradient
+                U, S, Vh = SVD_exact(blended_grad)
+                
+                # Reconstruct search direction using full SVD:
+                # D = U @ diag(S) @ Vh
+                D = U.matmul(torch.diag(S)).matmul(Vh)
+                
+                # Update parameters along SVD direction
+                p.add_(D, alpha=-group['lr'])
+                
+                # Increment step counter
+                state['step'] += 1
