@@ -125,7 +125,7 @@ def main():
     other_params = [p for p in model.parameters() if p.ndim < 2]           # Biases, BatchNorm params
 
     # Use Muon for 2D+ parameters (weight matrices)
-    muon_optimizer = Muon(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+    muon_optimizer = Muon_pnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
 
     # Use SGD for 1D parameters (biases, batch norm)
     sgd_optimizer = torch.optim.SGD(other_params, lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
@@ -344,8 +344,8 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    matlab_file_name='Muon_results.m'
+    matlab_file_name='Muon_pnorm_results.m'
     with open(matlab_file_name, "w") as f:
-        f.write("%File written by trainer_Muon_plots.py\n")
+        f.write("%File written by trainer_Muon_pnorm_plots.py\n")
         f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};")
     
