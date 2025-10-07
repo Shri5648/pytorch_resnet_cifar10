@@ -41,7 +41,7 @@ class Muon_pnorm(torch.optim.Optimizer):
                 U, S, Vh = SVD_exact(blended_grad)
                 
                 # Compute modified singular values: S^{1/p - 1}
-                print("p=',p_exp);
+                print("p=",p_exp);
                 exp = 1.0 / p_exp - 1.0
                 S_mod = torch.pow(S, exp)
                 
