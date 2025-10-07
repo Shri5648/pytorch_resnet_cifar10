@@ -16,13 +16,14 @@ class Muon_pnorm(torch.optim.Optimizer):
     @torch.no_grad()
     def step(self):
         for group in self.param_groups:
-            for p in group['params']:
-                if p.grad is None:
+            p_exp = group['p']
+            for p_tensor in group['params']:
+                if p_tensor.grad is None:
                     continue
-                G = p.grad
-                state = self.state[p]
+                G = p_tensor.grad
+                state = self.state[p_tensor]
                 
-                # Initialize momentum buffer if first step
+                # Initialize momentum buffer and step counter
                 if len(state) == 0:
                     state['momentum_buffer'] = torch.zeros_like(G)
                     state['step'] = 0
@@ -30,7 +31,7 @@ class Muon_pnorm(torch.optim.Optimizer):
                 momentum_buffer = state['momentum_buffer']
                 
                 # Weight decay (in-place)
-                p.mul_(1 - group['lr'] * group['weight_decay'])
+                p_tensor.mul_(1 - group['lr'] * group['weight_decay'])
                 
                 # Momentum update
                 momentum_buffer.lerp_(G, 1 - group['momentum'])
@@ -39,12 +40,15 @@ class Muon_pnorm(torch.optim.Optimizer):
                 # Compute SVD of blended gradient
                 U, S, Vh = SVD_exact(blended_grad)
                 
-                # Reconstruct search direction using full SVD:
-                # D = U @ diag(S) @ Vh
-                D = U.matmul(torch.diag(S)).matmul(Vh)
+                # Compute modified singular values: S^{1/p - 1}
+                exp = 1.0 / p_exp - 1.0
+                S_mod = torch.pow(S, exp)
                 
-                # Update parameters along SVD direction
-                p.add_(D, alpha=-group['lr'])
+                # Reconstruct search direction D = -U · diag(S_mod) · Vh
+                D = -U.matmul(torch.diag(S_mod)).matmul(Vh)
+                
+                # Update parameters along custom SVD direction
+                p_tensor.add_(D, alpha=group['lr'])
                 
                 # Increment step counter
                 state['step'] += 1
