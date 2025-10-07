@@ -9,8 +9,8 @@ def SVD_exact(G: Tensor) -> tuple[Tensor, Tensor, Tensor]:
     return U, S, Vh
 
 class Muon_pnorm(torch.optim.Optimizer):
-    def __init__(self, params, lr=0.02, weight_decay=0.01, momentum=0.95):
-        defaults = dict(lr=lr, weight_decay=weight_decay, momentum=momentum)
+    def __init__(self, params, lr=0.02, weight_decay=0.01, momentum=0.95, p=2.0):
+        defaults = dict(lr=lr, weight_decay=weight_decay, momentum=momentum,p=p)
         super().__init__(params, defaults)
     
     @torch.no_grad()
@@ -41,6 +41,7 @@ class Muon_pnorm(torch.optim.Optimizer):
                 U, S, Vh = SVD_exact(blended_grad)
                 
                 # Compute modified singular values: S^{1/p - 1}
+                print("p=',
                 exp = 1.0 / p_exp - 1.0
                 S_mod = torch.pow(S, exp)
                 
