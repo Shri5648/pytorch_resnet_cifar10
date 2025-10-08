@@ -41,7 +41,7 @@ class Muon_pnorm(torch.optim.Optimizer):
                 S_mod = torch.pow(S, exp)
 
                 # Reconstruct search direction d = -U · diag(S_mod) · Vh
-                d = -U.matmul(torch.diag(S_mod)).matmul(Vh)
+                d = -U.matmul(torch.diag_embed(S_mod)).matmul(Vh)
 
                 # Update parameters along custom SVD direction
                 p.add_(d, alpha=group['lr'])
