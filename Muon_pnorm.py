@@ -17,7 +17,7 @@ class Muon_pnorm(torch.optim.Optimizer):
     @torch.no_grad()
     def step(self):
         for group in self.param_groups:
-            pval=group['p']
+            pval=group['pval']
             for p in group['params']:
                 if p.grad is None:
                     continue
