@@ -37,7 +37,7 @@ class Muon_pnorm(torch.optim.Optimizer):
                 U, S, Vh = SVD_exact(grad)
 
                 # Compute modified singular values: S^{1/p - 1}
-                exp = 1.0 / p - 1.0
+                exp = 1.0 /(p - 1.0)
                 S_mod = torch.pow(S, exp)
 
                 # Reconstruct search direction d = -U · diag(S_mod) · Vh
