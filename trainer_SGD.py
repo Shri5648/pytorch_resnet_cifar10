@@ -59,6 +59,8 @@ best_prec1 = 0
 
 train_prec1_history = []
 val_prec1_history   = []
+train_loss_history = []
+val_loss_history = []
 
 def main():
     global args, best_prec1
@@ -137,12 +139,14 @@ def main():
 
         # train for one epoch
         print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
-        train_prec1 = train(train_loader, model, criterion, optimizer, epoch)
+        train_loss, train_prec1 = train(train_loader, model, criterion, optimizer, epoch)
+        train_loss_history.append(train_loss)
         train_prec1_history.append(train_prec1)
         lr_scheduler.step()
 
         # evaluate on validation set
-        val_prec1 = validate(val_loader, model, criterion)
+        val_loss, val_prec1 = validate(val_loader, model, criterion)
+        val_loss_history.append(val_loss)
         val_prec1_history.append(val_prec1)
 
         prec1=val_prec1
@@ -216,7 +220,8 @@ def train(train_loader, model, criterion, optimizer, epoch):
         #           'Prec@1 {top1.val:.3f} ({top1.avg:.3f})'.format(
         #               epoch, i, len(train_loader), batch_time=batch_time,
         #               data_time=data_time, loss=losses, top1=top1))
-    return top1.avg
+    return losses.avg, top1.avg
+
 
 
 def validate(val_loader, model, criterion):
@@ -267,7 +272,7 @@ def validate(val_loader, model, criterion):
     print(' * Prec@1 {top1.avg:.3f}'
           .format(top1=top1))
 
-    return top1.avg
+    return losses.avg, top1.avg
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
     """
@@ -312,7 +317,7 @@ def accuracy(output, target, topk=(1,)):
 if __name__ == '__main__':
     main()
 
-    matlab_file_name='SGD_results.m'
+    matlab_file_name='SGD_results_with_losses.m'
     with open(matlab_file_name, "w") as f:
         f.write("%File written by trainer_SGD.py\n")
-        f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};")
+        f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};\n" f"train_loss_history  = {train_loss_history};\n" f"val_loss_history= {val_loss_history};\n")
