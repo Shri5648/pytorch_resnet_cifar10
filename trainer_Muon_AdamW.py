@@ -62,6 +62,7 @@ best_prec1 = 0
 train_prec1_history = []
 val_prec1_history   = []
 
+
 def main():
     global args, best_prec1
     args = parser.parse_args()
@@ -126,11 +127,11 @@ def main():
     # Use Muon for 2D+ parameters (weight matrices)
     muon_optimizer = Muon(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
 
-    # Use SGD for 1D parameters (biases, batch norm)
-    sgd_optimizer = torch.optim.SGD(other_params, lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+    # Use AdamW for 1D parameters (biases, batch norm)
+    adamw_optimizer = torch.optim.AdamW(model.parameters(),lr=0.0001,betas=(0.9, 0.95), eps=1e-8, weight_decay=0.01)
 
     # Create optimizer list for easy iteration
-    optimizers = [muon_optimizer, sgd_optimizer]
+    optimizers = [muon_optimizer, adamw_optimizer]
 
     ########################## Perplexity AI Code ###########################################################
 
