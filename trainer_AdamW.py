@@ -143,7 +143,7 @@ def main():
 
         # train for one epoch
         print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
-        train_loss, train_prec1 = train(train_loader, model, criterion, optimizer, epoch)
+        train_loss, train_prec1 = train(train_loader, model, criterion, adamw_optimizer, epoch)
         train_loss_history.append(train_loss)
         train_prec1_history.append(train_prec1)
         lr_scheduler.step()
