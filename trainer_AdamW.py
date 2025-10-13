@@ -142,7 +142,7 @@ def main():
     for epoch in range(args.start_epoch, args.epochs):
 
         # train for one epoch
-        print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
+        print('current lr {:.5e}'.format(adamw_optimizer.param_groups[0]['lr']))
         train_loss, train_prec1 = train(train_loader, model, criterion, adamw_optimizer, epoch)
         train_loss_history.append(train_loss)
         train_prec1_history.append(train_prec1)
