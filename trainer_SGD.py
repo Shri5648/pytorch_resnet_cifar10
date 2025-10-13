@@ -66,7 +66,7 @@ training_end_time = 0
 total_training_time=0
 
 def main():
-    global args, best_prec1
+    global args, best_prec1, training_start_time, training_end_time, total_training_time
     args = parser.parse_args()
 
 
