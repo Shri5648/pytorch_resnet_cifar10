@@ -61,6 +61,9 @@ train_prec1_history = []
 val_prec1_history   = []
 train_loss_history = []
 val_loss_history = []
+training_start_time = 0
+training_end_time = 0
+total_training_time=0
 
 def main():
     global args, best_prec1
@@ -137,7 +140,7 @@ def main():
 
     training_start_time = time.time()
 
-    for epoch in range(args.start_epoch, args.epochs):
+    for epoch in range(args.start_epoch, 2):# args.epochs):
 
         # train for one epoch
         print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
