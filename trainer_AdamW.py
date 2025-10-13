@@ -121,7 +121,7 @@ def main():
         criterion.half()
 
     #optimizer = torch.optim.SGD(model.parameters(), args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
-    adamw_optimizer = torch.optim.AdamW(model.parameters(), lr=0.002, betas=(0.9, 0.99), eps=1e-8, weight_decay=0.01)
+    adamw_optimizer = torch.optim.AdamW(model.parameters(), lr=0.002, betas=(0.9, 0.99), eps=1e-8, weight_decay=0.05)
 
     lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(adamw_optimizer,
                                                         milestones=[100, 150], last_epoch=args.start_epoch - 1)
