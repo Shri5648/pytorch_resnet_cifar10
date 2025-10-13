@@ -62,6 +62,8 @@ best_prec1 = 0
 
 train_prec1_history = []
 val_prec1_history   = []
+train_loss_history = []
+val_loss_history = []
 training_start_time = 0
 training_end_time = 0
 total_training_time=0
