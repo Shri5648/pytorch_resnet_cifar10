@@ -62,9 +62,12 @@ best_prec1 = 0
 
 train_prec1_history = []
 val_prec1_history   = []
+training_start_time = 0
+training_end_time = 0
+total_training_time=0
 
 def main():
-    global args, best_prec1
+    global args, best_prec1, training_start_time, training_end_time, total_training_time
     args = parser.parse_args()
 
 
@@ -156,19 +159,23 @@ def main():
         validate(val_loader, model, criterion)
         return
 
-    for epoch in range(args.start_epoch, args.epochs):
+    training_start_time = time.time()
+
+    for epoch in range(args.start_epoch, 2): #args.epochs):
 
         # train for one epoch
         #print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
         print('current Muon lr {:.5e}, SGD lr {:.5e}'.format(muon_optimizer.param_groups[0]['lr'],sgd_optimizer.param_groups[0]['lr'] if sgd_optimizer.param_groups else 0))
-        train_prec1 = train(train_loader, model, criterion, optimizers, epoch)
+        train_loss, train_prec1 = train(train_loader, model, criterion, optimizers, epoch)
+        train_loss_history.append(train_loss)
         train_prec1_history.append(train_prec1)
 
         #lr_scheduler.step()
         for scheduler in lr_schedulers:
            scheduler.step()
 
-        val_prec1 = validate(val_loader, model, criterion)
+        val_loss, val_prec1 = validate(val_loader, model, criterion)
+        val_loss_history.append(val_loss)
         val_prec1_history.append(val_prec1)
 
         # evaluate on validation set
@@ -189,6 +196,9 @@ def main():
             'state_dict': model.state_dict(),
             'best_prec1': best_prec1,
         }, is_best, filename=os.path.join(args.save_dir, 'model.th'))
+
+    training_end_time = time.time()
+    total_training_time = training_end_time - training_start_time  
 
 
 def train(train_loader, model, criterion, optimizers, epoch):
@@ -249,7 +259,7 @@ def train(train_loader, model, criterion, optimizers, epoch):
         #              epoch, i, len(train_loader), batch_time=batch_time,
         #              data_time=data_time, loss=losses, top1=top1))
 
-    return top1.avg
+    return losses.avg, top1.avg
 
 
 def validate(val_loader, model, criterion):
@@ -300,7 +310,7 @@ def validate(val_loader, model, criterion):
     print(' * Prec@1 {top1.avg:.3f}'
           .format(top1=top1))
 
-    return top1.avg
+    return losses.avg, top1.avg
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
     """
@@ -344,8 +354,9 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    matlab_file_name='Muon_pnorm_results.m'
+    matlab_file_name='Muon_1.5norm_results.m'
     with open(matlab_file_name, "w") as f:
-        f.write("%File written by trainer_Muon_pnorm_plots.py\n")
-        f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};")
+        f.write("%File written by trainer_Muon_1.5norm_plots.py\n")
+        f.write(f"Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
+        f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};\n" f"train_loss_history  = {train_loss_history};\n" f"val_loss_history= {val_loss_history};\n")
     
