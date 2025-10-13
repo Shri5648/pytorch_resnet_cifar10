@@ -121,10 +121,9 @@ def main():
         criterion.half()
 
     #optimizer = torch.optim.SGD(model.parameters(), args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    adamw_optimizer = torch.optim.AdamW(model.parameters(),lr=0.0001,betas=(0.9, 0.95), eps=1e-8, weight_decay=0.01)
 
-
-    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer,
+    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(adamw_optimizer,
                                                         milestones=[100, 150], last_epoch=args.start_epoch - 1)
 
     if args.arch in ['resnet1202', 'resnet110']:
@@ -325,8 +324,8 @@ def accuracy(output, target, topk=(1,)):
 if __name__ == '__main__':
     main()
 
-    matlab_file_name='SGD_results_with_losses.m'
+    matlab_file_name='AdamW_results_with_losses.m'
     with open(matlab_file_name, "w") as f:
-        f.write("%File written by trainer_SGD.py\n")
+        f.write("%File written by trainer_AdamW.py\n")
         f.write(f"Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
         f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};\n" f"train_loss_history  = {train_loss_history};\n" f"val_loss_history= {val_loss_history};\n")
