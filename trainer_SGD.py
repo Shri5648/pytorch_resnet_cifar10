@@ -135,6 +135,8 @@ def main():
         validate(val_loader, model, criterion)
         return
 
+    training_start_time = time.time()
+
     for epoch in range(args.start_epoch, args.epochs):
 
         # train for one epoch
@@ -166,6 +168,9 @@ def main():
             'state_dict': model.state_dict(),
             'best_prec1': best_prec1,
         }, is_best, filename=os.path.join(args.save_dir, 'model.th'))
+        
+    training_end_time = time.time()
+    total_training_time = training_end_time - training_start_time
 
 
 def train(train_loader, model, criterion, optimizer, epoch):
@@ -320,4 +325,5 @@ if __name__ == '__main__':
     matlab_file_name='SGD_results_with_losses.m'
     with open(matlab_file_name, "w") as f:
         f.write("%File written by trainer_SGD.py\n")
+        f.write(f"Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
         f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};\n" f"train_loss_history  = {train_loss_history};\n" f"val_loss_history= {val_loss_history};\n")
