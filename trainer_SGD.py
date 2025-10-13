@@ -140,7 +140,7 @@ def main():
 
     training_start_time = time.time()
 
-    for epoch in range(args.start_epoch, 2):# args.epochs):
+    for epoch in range(args.start_epoch, args.epochs):
 
         # train for one epoch
         print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
