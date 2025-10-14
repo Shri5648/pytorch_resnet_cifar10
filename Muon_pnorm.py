@@ -9,7 +9,7 @@ def SVD_exact(G: Tensor) -> tuple[Tensor, Tensor, Tensor]:
     return U, S, Vh
 
 class Muon_pnorm(torch.optim.Optimizer):
-    def __init__(self, params, lr=0.02, weight_decay=0.01, momentum=0.95, pval=1.5):
+    def __init__(self, params, lr=0.02, weight_decay=0.01, momentum=0.95, pval=2):
         defaults = dict(lr=lr, weight_decay=weight_decay, momentum=momentum,pval=pval)
         print(f'pval={pval}')
         super().__init__(params, defaults)
