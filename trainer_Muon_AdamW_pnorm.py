@@ -132,11 +132,11 @@ def main():
     # Use Muon for 2D+ parameters (weight matrices)
     muon_optimizer = Muon_pnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
 
-    # Use SGD for 1D parameters (biases, batch norm)
-    sgd_optimizer = torch.optim.SGD(other_params, lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
+    # Use AdamW for 1D parameters (biases, batch norm)
+    adamw_optimizer = torch.optim.AdamW(model.parameters(), lr=0.002, betas=(0.9, 0.99), eps=1e-8, weight_decay=0.05)
 
     # Create optimizer list for easy iteration
-    optimizers = [muon_optimizer, sgd_optimizer]
+    optimizers = [muon_optimizer, adamw_optimizer]
 
     ########################## Perplexity AI Code ###########################################################
 
@@ -145,7 +145,7 @@ def main():
     # Update for multiple optimizers
     lr_schedulers = [
     torch.optim.lr_scheduler.MultiStepLR(muon_optimizer, milestones=[100, 150], last_epoch=args.start_epoch - 1),
-    torch.optim.lr_scheduler.MultiStepLR(sgd_optimizer, milestones=[100, 150], last_epoch=args.start_epoch - 1)
+    torch.optim.lr_scheduler.MultiStepLR(adamw_optimizer, milestones=[100, 150], last_epoch=args.start_epoch - 1)
     ]
     ########################## Perplexity AI Code ##################################################
 
@@ -167,7 +167,7 @@ def main():
 
         # train for one epoch
         #print('current lr {:.5e}'.format(optimizer.param_groups[0]['lr']))
-        print('current Muon lr {:.5e}, AdamW lr {:.5e}'.format(muon_optimizer.param_groups[0]['lr'],sgd_optimizer.param_groups[0]['lr'] if sgd_optimizer.param_groups else 0))
+        print('current Muon lr {:.5e}, AdamW lr {:.5e}'.format(muon_optimizer.param_groups[0]['lr'],adamw_optimizer.param_groups[0]['lr'] if adamw_optimizer.param_groups else 0))
         train_loss, train_prec1 = train(train_loader, model, criterion, optimizers, epoch)
         train_loss_history.append(train_loss)
         train_prec1_history.append(train_prec1)
