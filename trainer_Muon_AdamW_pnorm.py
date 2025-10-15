@@ -356,7 +356,7 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    matlab_file_name='Muon_AdamW_2norm_results.m'
+    matlab_file_name='Muon_AdamW_1.5norm_results.m'
     with open(matlab_file_name, "w") as f:
         f.write("%File written by trainer_Muon_AdamW_pnorm.py\n")
         f.write(f"Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
