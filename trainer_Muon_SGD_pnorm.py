@@ -356,9 +356,9 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    matlab_file_name='MuonSGD_15tenthsnorm_results.m'
+    matlab_file_name='MuonSGD_05tenthsnorm_results.m'
     with open(matlab_file_name, "w") as f:
         f.write("%File written by trainer_Muon_pnorm.py\n")
-        f.write(f"Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
+        f.write("%Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
         f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};\n" f"train_loss_history  = {train_loss_history};\n" f"val_loss_history= {val_loss_history};\n")
     
