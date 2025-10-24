@@ -6,6 +6,7 @@ from torch import Tensor
 def SVD_exact(G: Tensor) -> tuple[Tensor, Tensor, Tensor]:
     # Compute full SVD of the gradient tensor
     U, S, Vh = torch.linalg.svd(G, full_matrices=False)
+    print(f'Singular Value Matrix={S}')
     return U, S, Vh
 
 class Muon_pnorm(torch.optim.Optimizer):
