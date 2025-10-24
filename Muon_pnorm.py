@@ -4,9 +4,11 @@ from torch import Tensor
 
 @torch.compile
 def SVD_exact(G: Tensor) -> tuple[Tensor, Tensor, Tensor]:
+    if torch.isnan(G).any() or torch.isinf(G).any():
+      print("WARNING: grad contains NaN or Inf before SVD!", G)
     # Compute full SVD of the gradient tensor
     U, S, Vh = torch.linalg.svd(G, full_matrices=False)
-    print(f'Singular Value Matrix={S}')
+    #print(f'Singular Value Matrix={S}')
     return U, S, Vh
 
 class Muon_pnorm(torch.optim.Optimizer):
