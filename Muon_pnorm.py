@@ -34,8 +34,12 @@ class Muon_pnorm(torch.optim.Optimizer):
                     #state['step']=...
                 
                 momentum_buffer = state['momentum_buffer']
+                if torch.isnan(momentum_buffer).any() or torch.isinf(momentum_buffer).any():
+                  print("WARNING: momentum_buffer(before update) contains NaN or Inf before SVD!", momentum_buffer)
                 p.mul_(1 - group['lr'] * group['weight_decay'])
                 momentum_buffer.lerp_(grad, 1 - group['momentum'])
+                if torch.isnan(momentum_buffer).any() or torch.isinf(momentum_buffer).any():
+                  print("WARNING: momentum_buffer (after update) contains NaN or Inf before SVD!", momentum_buffer)
                 grad = grad.lerp_(momentum_buffer, group['momentum'])
                 
                 # Compute SVD of gradient
