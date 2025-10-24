@@ -6,6 +6,7 @@ from torch import Tensor
 def SVD_exact(G: Tensor) -> tuple[Tensor, Tensor, Tensor]:
     if torch.isnan(G).any() or torch.isinf(G).any():
       print("WARNING: grad contains NaN or Inf before SVD!", G)
+      raise ValueError("NaN or Inf detected in gradients - stopping execution")
     # Compute full SVD of the gradient tensor
     U, S, Vh = torch.linalg.svd(G, full_matrices=False)
     #print(f'Singular Value Matrix={S}')
