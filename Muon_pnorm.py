@@ -24,6 +24,9 @@ class Muon_pnorm(torch.optim.Optimizer):
                 if p.grad is None:
                     continue
                 grad = p.grad
+                if torch.isnan(grad).any() or torch.isinf(grad).any():
+                  print("WARNING: grad contains NaN or Inf during initialization", grad)
+                  breakpoint()
                 state = self.state[p]
                 
                 if len(state) == 0:
