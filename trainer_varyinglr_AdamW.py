@@ -13,7 +13,6 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import resnet
 import matplotlib.pyplot as plt
-from Muon_optimizer import Muon
 
 model_names = sorted(name for name in resnet.__dict__
     if name.islower() and not name.startswith("__")
