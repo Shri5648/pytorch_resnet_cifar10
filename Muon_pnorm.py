@@ -4,9 +4,6 @@ from torch import Tensor
 
 @torch.compile
 def SVD_exact(G: Tensor) -> tuple[Tensor, Tensor, Tensor]:
-    if torch.isnan(G).any() or torch.isinf(G).any():
-      print("WARNING: grad contains NaN or Inf before SVD!", G)
-      raise ValueError("NaN or Inf detected in gradients - stopping execution")
     # Compute full SVD of the gradient tensor
     U, S, Vh = torch.linalg.svd(G, full_matrices=False)
     #print(f'Singular Value Matrix={S}')
@@ -41,6 +38,10 @@ class Muon_pnorm(torch.optim.Optimizer):
                 if torch.isnan(momentum_buffer).any() or torch.isinf(momentum_buffer).any():
                   print("WARNING: momentum_buffer (after update) contains NaN or Inf before SVD!", momentum_buffer)
                 grad = grad.lerp_(momentum_buffer, group['momentum'])
+
+                if torch.isnan(grad).any() or torch.isinf(grad).any():
+                  print("WARNING: grad contains NaN or Inf before SVD!", grad)
+                  raise ValueError("NaN or Inf detected in gradients - stopping execution")
                 
                 # Compute SVD of gradient
                 U, S, Vh = SVD_exact(grad)
