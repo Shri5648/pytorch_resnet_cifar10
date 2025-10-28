@@ -41,4 +41,5 @@ class MuonexactSVD(torch.optim.Optimizer):
                 # Reconstruct search direction d = -U · diag(S_mod) · Vh
                 d = -U.matmul(Vh)
 
-                p.add_(v, alpha=-group['lr'])
+                # Update parameters along custom SVD direction
+                p.add_(d, alpha=group['lr'])
