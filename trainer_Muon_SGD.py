@@ -13,7 +13,8 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import resnet
 import matplotlib.pyplot as plt
-from Muon_optimizer import Muon
+#from Muon_optimizer import Muon
+from Muon_exactSVD import MuonexactSVD     
 
 model_names = sorted(name for name in resnet.__dict__
     if name.islower() and not name.startswith("__")
@@ -124,7 +125,8 @@ def main():
     other_params = [p for p in model.parameters() if p.ndim < 2]           # Biases, BatchNorm params
 
     # Use Muon for 2D+ parameters (weight matrices)
-    muon_optimizer = Muon(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+    #muon_optimizer = Muon(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+    muon_optimizer = MuonexactSVD(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
 
     # Use SGD for 1D parameters (biases, batch norm)
     sgd_optimizer = torch.optim.SGD(other_params, lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
