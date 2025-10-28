@@ -31,6 +31,14 @@ class Muon_exactSVD(torch.optim.Optimizer):
                 momentum_buffer.lerp_(grad, 1 - group['momentum'])
                 grad = grad.lerp_(momentum_buffer, group['momentum'])
                 
-                # Apply Newton-Schulz orthogonalization
-                v = zeropower_via_newtonschulz5(grad, 5)
+                # Compute SVD of gradient
+                U, S, Vh = SVD_exact(grad)
+
+                # Compute modified singular values: S^{1/p - 1}
+                exp = 1.0 /(pval - 1.0)
+                S_mod = torch.pow(S, exp)
+
+                # Reconstruct search direction d = -U · diag(S_mod) · Vh
+                d = -U.matmul(torch.diag_embed(S_mod)).matmul(Vh)
+
                 p.add_(v, alpha=-group['lr'])
