@@ -127,7 +127,7 @@ def main():
     hidden_matrix_params = [p for p in model.parameters() if p.ndim >= 2]  # Conv2d weights, Linear weights
     other_params = [p for p in model.parameters() if p.ndim < 2]           # Biases, BatchNorm params
 
-    # Use Muon for 2D+ parameters (weight matrices)
+    # Use AdamW for 2D+ parameters (weight matrices)
     adamw_optimizer_2d = torch.optim.AdamW(hidden_matrix_params, lr=0.05, weight_decay=0.01)
 
     # Use AdamW for 1D parameters (biases, batch norm)
