@@ -345,8 +345,8 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    matlab_file_name='Muon_results.m'
+    matlab_file_name='MuonexactSVD_results.m'
     with open(matlab_file_name, "w") as f:
-        f.write("%File written by trainer_Muon_plots.py\n")
+        f.write("%File written by trainer_Muon_SGD (previously trainer_Muon_plots).py\n")
         f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};")
     
