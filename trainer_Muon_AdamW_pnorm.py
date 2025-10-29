@@ -135,7 +135,7 @@ def main():
     muon_optimizer = Muon_qnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
 
     # Use AdamW for 1D parameters (biases, batch norm)
-    adamw_optimizer = torch.optim.AdamW(model.parameters(), lr=0.002, betas=(0.9, 0.99), eps=1e-8, weight_decay=0.05)
+    adamw_optimizer = torch.optim.AdamW(other_params, lr=0.002, betas=(0.9, 0.99), eps=1e-8, weight_decay=0.05)
 
     # Create optimizer list for easy iteration
     optimizers = [muon_optimizer, adamw_optimizer]
