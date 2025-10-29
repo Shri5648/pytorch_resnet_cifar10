@@ -1,3 +1,5 @@
+# For p>1
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
