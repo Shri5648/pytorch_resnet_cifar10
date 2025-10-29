@@ -41,8 +41,9 @@ class Muon_qnorm(torch.optim.Optimizer):
                 U, S, Vh = SVD_exact(grad)
 
                 # Compute modified singular values: S^{1/p - 1}
-                exp = 1.0 /(qval - 1.0)
-                S_mod = torch.pow(S, exp)
+                #exp = 1.0 /(qval - 1.0)
+                S_mod = torch.zeros_like(S)
+                S_mod[:, 0] = 1.0  # Set first singular value to 1 for all batch elements
 
                 # Reconstruct search direction d = -U · diag(S_mod) · Vh
                 d = -U.matmul(torch.diag_embed(S_mod)).matmul(Vh)
