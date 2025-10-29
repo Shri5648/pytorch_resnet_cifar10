@@ -8,11 +8,11 @@ from torch import Tensor
 def SVD_exact(G: Tensor) -> tuple[Tensor, Tensor, Tensor]:
     # Compute full SVD of the gradient tensor
     U, S, Vh = torch.linalg.svd(G, full_matrices=False)
-    print(f'Singular Value Matrix={S}')
+    #print(f'Singular Value Matrix={S}')
     return U, S, Vh
 
 class Muon_pnorm(torch.optim.Optimizer):
-    def __init__(self, params, lr=0.02, weight_decay=0.01, momentum=0.95, pval=1.5):
+    def __init__(self, params, lr=0.02, weight_decay=0.01, momentum=0.95, pval=3):
         defaults = dict(lr=lr, weight_decay=weight_decay, momentum=momentum,pval=pval)
         print(f'pval={pval}')
         super().__init__(params, defaults)
@@ -63,25 +63,7 @@ class Muon_pnorm(torch.optim.Optimizer):
                 p.add_(d, alpha=group['lr'])
 
                  # Increment step counter
-                # state['step'] += 1
-
-                
-              
-
-   
-                
-              
-                
-                
-                
-                             
-                
-                
-                
-                
-                
-                
-                
+                # state['step'] += 1        
                 
                 
                 
