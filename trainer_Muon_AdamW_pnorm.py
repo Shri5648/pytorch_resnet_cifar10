@@ -59,6 +59,9 @@ parser.add_argument('--save-dir', dest='save_dir',
 parser.add_argument('--save-every', dest='save_every',
                     help='Saves checkpoints at every specified number of epochs',
                     type=int, default=10)
+parser.add_argument('--pval', default=3, type=int, metavar='P',
+                    help='p-norm value for Muon optimizer (default: 3)')
+
 best_prec1 = 0
 
 train_prec1_history = []
@@ -132,7 +135,7 @@ def main():
 
     # Use Muon for 2D+ parameters (weight matrices)
     muon_optimizer = Muon_pnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
-    #muon_optimizer = Muon_qnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+    #muon_optimizer = Muon_qnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01,pval=args.pval)
 
     # Use AdamW for 1D parameters (biases, batch norm)
     adamw_optimizer = torch.optim.AdamW(other_params, lr=0.002, betas=(0.9, 0.99), eps=1e-8, weight_decay=0.05)
