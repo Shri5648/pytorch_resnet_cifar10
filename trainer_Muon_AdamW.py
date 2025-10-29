@@ -131,7 +131,7 @@ def main():
 
     # Use Muon for 2D+ parameters (weight matrices)
     #muon_optimizer = Muon(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
-     muon_optimizer = MuonexactSVD(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+    muon_optimizer = MuonexactSVD(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
 
     # Use AdamW for 1D parameters (biases, batch norm)
     adamw_optimizer = torch.optim.AdamW(other_params, lr=0.002, betas=(0.9, 0.99), eps=1e-8, weight_decay=0.05)
