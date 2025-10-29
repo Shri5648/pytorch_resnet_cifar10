@@ -134,7 +134,7 @@ def main():
     other_params = [p for p in model.parameters() if p.ndim < 2]           # Biases, BatchNorm params
 
     # Use Muon for 2D+ parameters (weight matrices)
-    muon_optimizer = Muon_pnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+    muon_optimizer = Muon_pnorm(hidden_matrix_params,pval=args.pval, lr=0.05, momentum=0.95, weight_decay=0.01)
     #muon_optimizer = Muon_qnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01,pval=args.pval)
 
     # Use AdamW for 1D parameters (biases, batch norm)
@@ -361,7 +361,7 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    matlab_file_name='Muon_AdamW_3norm_results.m'
+    matlab_file_name=f'Muon_AdamW_{args.pval}norm_results.m'
     with open(matlab_file_name, "w") as f:
         f.write("%File written by trainer_Muon_AdamW_pnorm.py\n")
         f.write(f"Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
