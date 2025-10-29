@@ -14,8 +14,8 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import resnet
 import matplotlib.pyplot as plt
-#from Muon_pnorm import Muon_pnorm
-from Muon_qnorm import Muon_qnorm
+from Muon_pnorm import Muon_pnorm
+#from Muon_qnorm import Muon_qnorm
 
 model_names = sorted(name for name in resnet.__dict__
     if name.islower() and not name.startswith("__")
@@ -131,8 +131,8 @@ def main():
     other_params = [p for p in model.parameters() if p.ndim < 2]           # Biases, BatchNorm params
 
     # Use Muon for 2D+ parameters (weight matrices)
-    #muon_optimizer = Muon_pnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
-    muon_optimizer = Muon_qnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+    muon_optimizer = Muon_pnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+    #muon_optimizer = Muon_qnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
 
     # Use AdamW for 1D parameters (biases, batch norm)
     adamw_optimizer = torch.optim.AdamW(other_params, lr=0.002, betas=(0.9, 0.99), eps=1e-8, weight_decay=0.05)
@@ -358,9 +358,9 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    matlab_file_name='Muon_AdamW_1norm_results.m'
+    matlab_file_name='Muon_AdamW_3norm_results.m'
     with open(matlab_file_name, "w") as f:
-        f.write("%File written by trainer_Muon_AdamW_qnorm.py\n")
+        f.write("%File written by trainer_Muon_AdamW_pnorm.py\n")
         f.write(f"Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
         f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};\n" f"train_loss_history  = {train_loss_history};\n" f"val_loss_history= {val_loss_history};\n")
     
