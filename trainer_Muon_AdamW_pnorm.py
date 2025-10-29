@@ -59,7 +59,7 @@ parser.add_argument('--save-dir', dest='save_dir',
 parser.add_argument('--save-every', dest='save_every',
                     help='Saves checkpoints at every specified number of epochs',
                     type=int, default=10)
-parser.add_argument('--pval', default=3, type=int, metavar='P',
+parser.add_argument('--pval', default=3.0, type=float, metavar='P',
                     help='p-norm value for Muon optimizer (default: 3)')
 
 best_prec1 = 0
