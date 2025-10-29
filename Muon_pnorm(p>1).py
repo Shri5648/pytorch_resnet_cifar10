@@ -10,7 +10,7 @@ def SVD_exact(G: Tensor) -> tuple[Tensor, Tensor, Tensor]:
     return U, S, Vh
 
 class Muon_pnorm(torch.optim.Optimizer):
-    def __init__(self, params, lr=0.02, weight_decay=0.01, momentum=0.95, pval=0.5):
+    def __init__(self, params, lr=0.02, weight_decay=0.01, momentum=0.95, pval=1.5):
         defaults = dict(lr=lr, weight_decay=weight_decay, momentum=momentum,pval=pval)
         print(f'pval={pval}')
         super().__init__(params, defaults)
@@ -24,9 +24,9 @@ class Muon_pnorm(torch.optim.Optimizer):
                 if p.grad is None:
                     continue
                 grad = p.grad
-                if torch.isnan(grad).any() or torch.isinf(grad).any():
-                  print("WARNING: grad contains NaN or Inf during initialization", grad)
-                  breakpoint()
+               # if torch.isnan(grad).any() or torch.isinf(grad).any():
+               #   print("WARNING: grad contains NaN or Inf during initialization", grad)
+               #   breakpoint()
                 state = self.state[p]
                 
                 if len(state) == 0:
@@ -34,18 +34,18 @@ class Muon_pnorm(torch.optim.Optimizer):
                     #state['step']=...
                 
                 momentum_buffer = state['momentum_buffer']
-                if torch.isnan(momentum_buffer).any() or torch.isinf(momentum_buffer).any():
-                  print("WARNING: momentum_buffer(before update) contains NaN or Inf before SVD!", momentum_buffer)
+                #if torch.isnan(momentum_buffer).any() or torch.isinf(momentum_buffer).any():
+                #  print("WARNING: momentum_buffer(before update) contains NaN or Inf before SVD!", momentum_buffer)
                 p.mul_(1 - group['lr'] * group['weight_decay'])
                 momentum_buffer.lerp_(grad, 1 - group['momentum'])
-                if torch.isnan(momentum_buffer).any() or torch.isinf(momentum_buffer).any():
-                  print("WARNING: momentum_buffer (after update) contains NaN or Inf before SVD!", momentum_buffer)
-                  breakpoint()
+                #if torch.isnan(momentum_buffer).any() or torch.isinf(momentum_buffer).any():
+                #  print("WARNING: momentum_buffer (after update) contains NaN or Inf before SVD!", momentum_buffer)
+                #  breakpoint()
                 grad = grad.lerp_(momentum_buffer, group['momentum'])
 
-                if torch.isnan(grad).any() or torch.isinf(grad).any():
-                  print("WARNING: grad contains NaN or Inf before SVD!", grad)
-                  raise ValueError("NaN or Inf detected in gradients - stopping execution")
+                #if torch.isnan(grad).any() or torch.isinf(grad).any():
+                #  print("WARNING: grad contains NaN or Inf before SVD!", grad)
+                #  raise ValueError("NaN or Inf detected in gradients - stopping execution")
                 
                 # Compute SVD of gradient
                 U, S, Vh = SVD_exact(grad)
