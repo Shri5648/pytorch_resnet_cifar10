@@ -14,7 +14,7 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 import resnet
 import matplotlib.pyplot as plt
-from Muon_pnorm import Muon_pnorm
+from Muon_pnorm(p>1) import Muon_pnorm
 
 model_names = sorted(name for name in resnet.__dict__
     if name.islower() and not name.startswith("__")
