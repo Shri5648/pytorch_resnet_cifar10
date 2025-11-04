@@ -134,8 +134,8 @@ def main():
     other_params = [p for p in model.parameters() if p.ndim < 2]           # Biases, BatchNorm params
 
     # Use Muon for 2D+ parameters (weight matrices)
-    #muon_optimizer = Muon_pnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
-    muon_optimizer = Muon_qnorm(hidden_matrix_params, lr=0.05, momentum=0.95, weight_decay=0.01)
+    #muon_optimizer = Muon_pnorm(hidden_matrix_params,pval=args.pval, lr=0.05, momentum=0.95, weight_decay=0.01)
+    muon_optimizer = Muon_qnorm(hidden_matrix_params, pval=args.pval, lr=0.05, momentum=0.95, weight_decay=0.01)
 
     # Use SGD for 1D parameters (biases, batch norm)
     sgd_optimizer = torch.optim.SGD(other_params, lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)
