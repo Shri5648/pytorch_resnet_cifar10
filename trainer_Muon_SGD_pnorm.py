@@ -361,6 +361,28 @@ if __name__ == '__main__':
     matlab_file_name='ESMuonSGD_{args.pval}norm_results.m'
     with open(matlab_file_name, "w") as f:
         f.write("%File written by trainer_Muon_qnorm.py\n")
+
+        # Write configuration/arguments
+        f.write("%Configuration parameters\n")
+        f.write(f"arch='{args.arch}';\n")
+        f.write(f"workers={args.workers};\n")
+        f.write(f"epochs={args.epochs};\n")
+        f.write(f"start_epoch={args.start_epoch};\n")
+        f.write(f"batch_size={args.batch_size};\n")
+        f.write(f"lr={args.lr};\n")
+        f.write(f"momentum={args.momentum};\n")
+        f.write(f"weight_decay={args.weight_decay};\n")
+        f.write(f"print_freq={args.print_freq};\n")
+        f.write(f"resume='{args.resume}';\n")
+        f.write(f"evaluate={str(args.evaluate).lower()};\n")
+        f.write(f"pretrained={str(args.pretrained).lower()};\n")
+        f.write(f"half={str(args.half).lower()};\n")
+        f.write(f"save_dir='{args.save_dir}';\n")
+        f.write(f"save_every={args.save_every};\n")
+        f.write(f"pval={args.pval};\n")
+    
+        # Write training results
+        f.write("%Training results\n")           
         f.write("%Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
         f.write(f"train_prec1_history={train_prec1_history};\n" f"val_prec1_history={val_prec1_history};\n" f"train_loss_history  = {train_loss_history};\n" f"val_loss_history= {val_loss_history};\n")
     
