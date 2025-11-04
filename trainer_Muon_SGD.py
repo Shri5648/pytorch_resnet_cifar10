@@ -378,7 +378,7 @@ if __name__ == '__main__':
         f.write(f"half={str(args.half).lower()};\n")
         f.write(f"save_dir='{args.save_dir}';\n")
         f.write(f"save_every={args.save_every};\n")
-        f.write(f"pval={args.pval};\n")
+        # f.write(f"pval={args.pval};\n")
     
         # Write training results
         f.write("%Training results\n")           
