@@ -358,7 +358,7 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    matlab_file_name='ESMuonSGD_1norm_results.m'
+    matlab_file_name='ESMuonSGD_{args.pval}norm_results.m'
     with open(matlab_file_name, "w") as f:
         f.write("%File written by trainer_Muon_qnorm.py\n")
         f.write("%Total training time for {args.epochs} epochs: {total_training_time:.2f};\n")
