@@ -260,8 +260,9 @@ def validate(val_loader, model, criterion):
                 input_var = input_var.half()
 
             # compute output
-            output = model(input_var)
-            loss = criterion(output, target_var)
+            #output = model(input_var)
+            output,loss = model(input_var,target_var)          
+            #loss = criterion(output, target_var)
 
             output = output.float()
             loss = loss.float()
@@ -314,6 +315,10 @@ class AverageMeter(object):
 
 def accuracy(output, target, topk=(1,)):
     """Computes the precision@k for the specified values of k"""
+    if output.dim() == 3:
+        # Option 1: Use last token prediction (most common for language models)
+        output = output[:, -1, :]
+  
     maxk = max(topk)
     batch_size = target.size(0)
 
