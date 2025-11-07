@@ -111,9 +111,10 @@ def main():
     #     batch_size=128, shuffle=False,
     #     num_workers=args.workers, pin_memory=True)
 
-    dataset="FashionMNIST"
-    train_dataset, test_dataset = read_datasets(dataset)
-    train_loader=torch.utils.data.DataLoader(
+    dataset="Shakespeare"
+    train_dataset, val_dataset = read_datasets(dataset)
+    train_loader=torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers, pin_memory=True, drop_last=True)
+    val_loader=torch.utils.data.DataLoader(val_dataset, batch_size=1000, shuffle=False, num_workers=args.workers, pin_memory=True)
 
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().cuda()
@@ -327,9 +328,9 @@ def accuracy(output, target, topk=(1,)):
 if __name__ == '__main__':
     main()
 
-    matlab_file_name='SGD_results_with_losses.m'
+    matlab_file_name='SGD_nanogpt_results.m'
     with open(matlab_file_name, "w") as f:
-        f.write("%File written by trainer_SGD.py\n")
+        f.write("%File written by trainer_nanogpt.py\n")
 
         # Write configuration/arguments
         f.write("%Configuration parameters\n")
