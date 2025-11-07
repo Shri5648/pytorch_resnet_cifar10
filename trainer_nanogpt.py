@@ -11,7 +11,7 @@ import torch.optim
 import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
-from .read_datasets import read_datasets
+from .read_Shakespeare_dataset import read_datasets
 #import resnet
 import nanogpt
 
