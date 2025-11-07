@@ -13,8 +13,7 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 from read_Shakespeare_dataset import read_datasets
 #import resnet
-import nanogpt
-import models
+import nanogpt, gpt, __init__
 
 # model_names = sorted(name for name in resnet.__dict__if name.islower() and not name.startswith("__")and name.startswith("resnet") and callable(resnet.__dict__[name]))
 # print(model_names)
@@ -75,7 +74,7 @@ def main():
         os.makedirs(args.save_dir)
 
     #model = torch.nn.DataParallel(nanogpt.__dict__[args.arch]())
-    model= models.__dict__[model_names]()
+    model= __init__.__dict__[model_names]()
     model.cuda()
 
     # optionally resume from a checkpoint
