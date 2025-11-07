@@ -9,7 +9,7 @@ https://github.com/huggingface/transformers/blob/main/src/transformers/models/gp
 3) https://github.com/karpathy/nanoGPT/blob/master/
 """
 
-from .gpt import GPT, GPTConfig
+from gpt import GPT, GPTConfig
 import os
 import pickle
 import torch
