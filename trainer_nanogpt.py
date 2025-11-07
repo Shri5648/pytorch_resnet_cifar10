@@ -11,20 +11,18 @@ import torch.optim
 import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
-import resnet
+#import resnet
+import nanogpt
 
-model_names = sorted(name for name in resnet.__dict__
-    if name.islower() and not name.startswith("__")
-                     and name.startswith("resnet")
-                     and callable(resnet.__dict__[name]))
+# model_names = sorted(name for name in resnet.__dict__if name.islower() and not name.startswith("__")and name.startswith("resnet") and callable(resnet.__dict__[name]))
+# print(model_names)
 
+model_names='NanoGPT'
 print(model_names)
 
 parser = argparse.ArgumentParser(description='Propert ResNets for CIFAR10 in pytorch')
-parser.add_argument('--arch', '-a', metavar='ARCH', default='resnet32',
-                    choices=model_names,
-                    help='model architecture: ' + ' | '.join(model_names) +
-                    ' (default: resnet32)')
+#parser.add_argument('--arch', '-a', metavar='ARCH', default='resnet32', choices=model_names, help='model architecture: ' + ' | '.join(model_names) +' (default: resnet32)')
+parser.add_argument('--arch','-a', metavar='ARCH', default='nanogpt', help='model architecture: ' + ' | '.join(model_names) +' (default: nanogpt)')
 parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
 parser.add_argument('--epochs', default=200, type=int, metavar='N',
@@ -74,7 +72,7 @@ def main():
     if not os.path.exists(args.save_dir):
         os.makedirs(args.save_dir)
 
-    model = torch.nn.DataParallel(resnet.__dict__[args.arch]())
+    model = torch.nn.DataParallel(nanogpt.__dict__[args.arch]())
     model.cuda()
 
     # optionally resume from a checkpoint
@@ -95,23 +93,27 @@ def main():
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
 
-    train_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR10(root='./data', train=True, transform=transforms.Compose([
-            transforms.RandomHorizontalFlip(),
-            transforms.RandomCrop(32, 4),
-            transforms.ToTensor(),
-            normalize,
-        ]), download=True),
-        batch_size=args.batch_size, shuffle=True,
-        num_workers=args.workers, pin_memory=True)
+    # train_loader = torch.utils.data.DataLoader(
+    #     datasets.CIFAR10(root='./data', train=True, transform=transforms.Compose([
+    #         transforms.RandomHorizontalFlip(),
+    #         transforms.RandomCrop(32, 4),
+    #         transforms.ToTensor(),
+    #         normalize,
+    #     ]), download=True),
+    #     batch_size=args.batch_size, shuffle=True,
+    #     num_workers=args.workers, pin_memory=True)
 
-    val_loader = torch.utils.data.DataLoader(
-        datasets.CIFAR10(root='./data', train=False, transform=transforms.Compose([
-            transforms.ToTensor(),
-            normalize,
-        ])),
-        batch_size=128, shuffle=False,
-        num_workers=args.workers, pin_memory=True)
+    # val_loader = torch.utils.data.DataLoader(
+    #     datasets.CIFAR10(root='./data', train=False, transform=transforms.Compose([
+    #         transforms.ToTensor(),
+    #         normalize,
+    #     ])),
+    #     batch_size=128, shuffle=False,
+    #     num_workers=args.workers, pin_memory=True)
+
+    dataset="FashionMNIST"
+    train_dataset, test_dataset = read_datasets(dataset)
+    train_loader=torch.utils.data.DataLoader(
 
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss().cuda()
