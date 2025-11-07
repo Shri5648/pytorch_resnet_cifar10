@@ -18,7 +18,7 @@ import nanogpt, gpt, __init__
 # model_names = sorted(name for name in resnet.__dict__if name.islower() and not name.startswith("__")and name.startswith("resnet") and callable(resnet.__dict__[name]))
 # print(model_names)
 
-model_names='nanogpt'
+model_names='nanoGPT'
 print(model_names)
 
 parser = argparse.ArgumentParser(description='Propert ResNets for CIFAR10 in pytorch')
