@@ -16,7 +16,7 @@ import torch
 
 __all__=['nanoGPT']
 
-exec(open('./config/train_shakespeare_char.py').read()) # overrides from your config file
+exec(open('train_shakespeare_char.py').read()) # overrides from your config file
 
 # attempt to derive vocab_size from the dataset
 data_dir = './data/Shakespeare' # to be changed everytime if used a different setting
