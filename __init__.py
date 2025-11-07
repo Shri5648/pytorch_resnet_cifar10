@@ -1,1 +1,1 @@
-from .nanogpt import *
+from nanogpt import *
