@@ -26,6 +26,7 @@ lib64/
 sdist/
 var/
 wheels/
+bin/
 *.manifest
 *.spec
 
@@ -43,6 +44,7 @@ htmlcov/
 *.m
 *.txt
 *.pkl
+data/
 
 # Model files
 *.pth
@@ -50,6 +52,7 @@ htmlcov/
 *.ckpt
 *.safetensors
 checkpoints/
+save_temp/
 
 # Logs and temporary
 *.log
@@ -58,6 +61,7 @@ logs/
 *.err
 *.tmp
 *.temp
+*.cfg
 
 # Compiled files (C/C++/Fortran)
 *.o
