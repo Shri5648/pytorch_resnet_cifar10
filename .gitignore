@@ -1,0 +1,67 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so\
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+.virtualenv/
+pytorch_resnet_cifar10/
+
+# Distribution / packaging
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+lib/
+lib64/
+sdist/
+var/
+wheels/
+*.manifest
+*.spec
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# Scientific data files
+*.h5
+*.hdf5
+*.mat
+*.m
+*.txt
+*.pkl
+
+# Model files
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+checkpoints/
+
+# Logs and temporary
+*.log
+logs/
+*.out
+*.err
+*.tmp
+*.temp
+
+# Compiled files (C/C++/Fortran)
+*.o
+*.ko
+*.obj
+*.elf
+*.exe
