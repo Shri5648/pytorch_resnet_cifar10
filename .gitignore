@@ -36,6 +36,7 @@ bin/
 .coverage.*
 htmlcov/
 .tox/
+*.TAG
 
 # Scientific data files
 *.h5
