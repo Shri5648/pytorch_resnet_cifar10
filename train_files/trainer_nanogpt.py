@@ -13,7 +13,8 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 from read_Shakespeare_dataset import read_datasets
 #import resnet
-import nanogpt, gpt, __init__
+#import nanogpt, gpt, __init__
+from models import nanogpt
 
 # model_names = sorted(name for name in resnet.__dict__if name.islower() and not name.startswith("__")and name.startswith("resnet") and callable(resnet.__dict__[name]))
 # print(model_names)
